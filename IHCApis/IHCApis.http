@@ -1,0 +1,6 @@
+@IHCApis_HostAddress = http://localhost:5187
+
+GET {{IHCApis_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
