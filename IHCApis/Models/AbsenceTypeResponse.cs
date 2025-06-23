@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace IHCApis.Models
+namespace iHC.Models.Forms
 {
     public class AbsenceTypeDto
     {

@@ -1,9 +1,10 @@
-using IHCApis.Models;
+using iHC.Models.Forms;
 using Microsoft.AspNetCore.Mvc;
 using System.IO.Compression;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text;
+using iHC.Models.ProfilePage;
 
 namespace IHCApis.Controllers
 {
@@ -11,6 +12,7 @@ namespace IHCApis.Controllers
     [Route("[controller]")]
     public class ERPController : ControllerBase
     {
+
 
         private readonly IHttpClientFactory _httpClientFactory;
 
@@ -781,7 +783,7 @@ namespace IHCApis.Controllers
             // Serialize with case-insensitive options
             var options = new JsonSerializerOptions
             {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                PropertyNamingPolicy = null,
                 WriteIndented = true
             };
 
@@ -991,7 +993,7 @@ namespace IHCApis.Controllers
 
                 var options = new JsonSerializerOptions
                 {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    PropertyNamingPolicy = null,
                     WriteIndented = true
                 };
 
@@ -999,76 +1001,90 @@ namespace IHCApis.Controllers
                 var content = new StringContent(payload, Encoding.UTF8, "application/json");
 
                 var drResponse = await client.PostAsync("/hcmRestApi/resources/latest/documentRecords", content);
-                var respBody = await drResponse.Content.ReadAsStringAsync();
 
-
-
-                // Handle empty responses
-                if (string.IsNullOrWhiteSpace(respBody))
+                if (!drResponse.IsSuccessStatusCode)
                 {
-                    return StatusCode((int)drResponse.StatusCode, new
+
+                    // Handle empty response
+                    if (drResponse.Content == null)
                     {
-                        CorrelationId = correlationId,
-                        Message = "Empty response from Oracle HCM",
-                        Diagnostic = new
+                        return StatusCode((int)drResponse.StatusCode, new
                         {
-                            StatusCode = drResponse.StatusCode,
-                            RequestUrl = drResponse.RequestMessage?.RequestUri,
-                            Headers = drResponse.RequestMessage?.Headers
-                        }
-                    });
-                }
+                            CorrelationId = correlationId,
+                            Message = "Empty response from Oracle HCM"
+                        });
+                    }
 
-                // Attempt JSON parse
-                try
-                {
-                    var jsonDoc = JsonDocument.Parse(respBody);
-                    return new JsonResult(jsonDoc, new JsonSerializerOptions
+                    // Decompress response
+                    byte[] responseBytes = await drResponse.Content.ReadAsByteArrayAsync();
+                    string respBody;
+                    try
                     {
-                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-                    })
-                    {
-                        StatusCode = (int)drResponse.StatusCode
-                    };
-                }
-                catch (JsonException ex)
-                {
-
-                    return StatusCode((int)drResponse.StatusCode, new
-                    {
-                        CorrelationId = correlationId,
-                        Message = "Invalid JSON response from Oracle HCM",
-                        RawResponse = respBody,
-                        Diagnostic = new
+                        if (IsGzipped(responseBytes))
                         {
-                            Headers = drResponse.Headers,
-                            ContentType = drResponse.Content.Headers.ContentType
+                            using var memoryStream = new MemoryStream(responseBytes);
+                            using var gzipStream = new System.IO.Compression.GZipStream(memoryStream, CompressionMode.Decompress);
+                            using var streamReader = new StreamReader(gzipStream, Encoding.UTF8);
+                            respBody = await streamReader.ReadToEndAsync();
                         }
-                    });
-                }
-            }
-            catch (HttpRequestException ex)
-            {
+                        else
+                        {
+                            respBody = Encoding.UTF8.GetString(responseBytes);
+                        }
+                    }
+                    catch (Exception decompressEx)
+                    {
 
-                return StatusCode(500, new
-                {
-                    Message = "Connection to Oracle HCM failed",
-                    Error = ex.Message,
-                    InnerError = ex.InnerException?.Message
-                });
+                        return StatusCode(500, new
+                        {
+                            CorrelationId = correlationId,
+                            Message = "Failed to process Oracle HCM response",
+                            Diagnostic = "Decompression error"
+                        });
+                    }
+
+                    // Parse response
+                    try
+                    {
+                        return StatusCode((int)drResponse.StatusCode, new
+                        {
+                            CorrelationId = correlationId,
+                            Message = respBody,
+                            Diagnostic = "Decompression error"
+                        });
+                    }
+                    catch (JsonException)
+                    {
+                        // Check if response is actually JSON with unexpected encoding
+                        var contentType = drResponse.Content.Headers.ContentType?.MediaType ?? "unknown";
+                        return StatusCode((int)drResponse.StatusCode, new
+                        {
+                            CorrelationId = correlationId,
+                            Message = contentType.StartsWith("application/json")
+                                ? "Invalid JSON format from Oracle HCM"
+                                : "Non-JSON response from Oracle HCM",
+                            RawResponse = respBody
+                        });
+                    }
+                }
+
+
+                var drJson = await drResponse.Content.ReadAsStringAsync();
+                var drResult = JsonSerializer.Deserialize<DocumentRecordResponse>(
+                    drJson,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                );
+
+                var recordId = drResult.DocumentsOfRecordId;
+
+
+                return Ok(new { DocumentsOfRecordId = recordId });
             }
             catch (Exception ex)
             {
-
-                return StatusCode(500, new
-                {
-                    Message = "Internal server error",
-                    Error = ex.Message,
-                    StackTrace = ex.StackTrace
-                });
+                throw;
             }
         }
-
 
     }
 }

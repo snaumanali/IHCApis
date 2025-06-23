@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace IHCApis.Models
+namespace iHC.Models.Forms
 {
     public class BuisnessTripType
     {

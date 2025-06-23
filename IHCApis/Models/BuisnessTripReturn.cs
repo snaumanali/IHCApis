@@ -1,10 +1,10 @@
 ﻿using Newtonsoft.Json;
 
-namespace IHCApis.Models
+namespace iHC.Models.Forms
 {
     public class BuisnessTripReturn
     {
-        [JsonProperty("DocumentTypeId")]
+        [JsonProperty("documentTypeId")]
         public long DocumentTypeId { get; set; }
 
         [JsonProperty("SystemDocumentType")]
@@ -16,17 +16,17 @@ namespace IHCApis.Models
         [JsonProperty("DocumentCode")]
         public string DocumentCode { get; set; }
 
-        [JsonProperty("PersonId")]
-        public long PersonId { get; set; }
+        //[JsonProperty("PersonId")]
+        //public long PersonId { get; set; }
 
         [JsonProperty("PersonNumber")]
         public string PersonNumber { get; set; }
 
-        [JsonProperty("Attachments")]
-        public List<object> Attachments { get; set; }
+        [JsonProperty("attachments")]
+        public List<object> attachments { get; set; }
 
-        [JsonProperty("DocumentRecordsDFF")]
-        public List<BuisnessTripReturnDetails> DocumentRecordsDFF { get; set; }
+        [JsonProperty("documentRecordsDFF")]
+        public List<BuisnessTripReturnDetails> documentRecordsDFF { get; set; }
     }
 
     public class BuisnessTripReturnDetails
@@ -34,62 +34,63 @@ namespace IHCApis.Models
         [JsonProperty("DocumentsOfRecordId")]
         public long DocumentsOfRecordId { get; set; }
 
+
         [JsonProperty("__FLEX_Context")]
-        public string FLEX_Context { get; set; }
+        public string __FLEX_Context { get; set; }
 
         [JsonProperty("__FLEX_Context_DisplayValue")]
-        public string FLEX_Context_DisplayValue { get; set; }
+        public string __FLEX_Context_DisplayValue { get; set; }
 
-        [JsonProperty("Dummy")]
-        public string Dummy { get; set; }
+        [JsonProperty("dummy")]
+        public string dummy { get; set; }
 
-        [JsonProperty("BusinessTrip")]
-        public string BusinessTrip { get; set; }
+        //[JsonProperty("BusinessTrip")]
+        //public string BusinessTrip { get; set; }
 
-        [JsonProperty("CountryFrom")]
-        public string CountryFrom { get; set; }
+        [JsonProperty("countryFrom")]
+        public string countryFrom { get; set; }
 
-        [JsonProperty("CityFrom")]
-        public string CityFrom { get; set; }
+        [JsonProperty("cityFrom")]
+        public string cityFrom { get; set; }
 
-        [JsonProperty("CountryTo")]
-        public string CountryTo { get; set; }
+        [JsonProperty("countryTo")]
+        public string countryTo { get; set; }
 
-        [JsonProperty("CityTo")]
-        public string CityTo { get; set; }
+        [JsonProperty("cityTo")]
+        public string cityTo { get; set; }
 
-        [JsonProperty("TravelDuration")]
-        public int? TravelDuration { get; set; }
+        [JsonProperty("travelDuration")]
+        public int? travelDuration { get; set; }
 
-        [JsonProperty("FlyingHours")]
-        public int FlyingHours { get; set; }
+        [JsonProperty("flyingHours")]
+        public int flyingHours { get; set; }
 
-        [JsonProperty("ActivityStartDate")]
-        public string ActivityStartDate { get; set; }
+        [JsonProperty("activityStartDate")]
+        public string activityStartDate { get; set; }
 
-        [JsonProperty("ActivityEndDate")]
-        public string ActivityEndDate { get; set; }
+        [JsonProperty("activityEndDate")]
+        public string activityEndDate { get; set; }
 
-        [JsonProperty("EmployeeCostForHousing")]
-        public decimal EmployeeCostForHousing { get; set; }
+        [JsonProperty("employeeCostForHousing")]
+        public decimal employeeCostForHousing { get; set; }
 
-        [JsonProperty("WayOfTravel")]
-        public string WayOfTravel { get; set; }
+        [JsonProperty("wayOfTravel")]
+        public string wayOfTravel { get; set; }
 
-        [JsonProperty("OtherExpenses")]
-        public decimal OtherExpenses { get; set; }
+        [JsonProperty("otherExpenses")]
+        public decimal otherExpenses { get; set; }
 
-        [JsonProperty("OtherExpensesDetails")]
-        public string OtherExpensesDetails { get; set; }
+        [JsonProperty("otherExpensesDetails")]
+        public string otherExpensesDetails { get; set; }
 
-        [JsonProperty("EmployeeCostForVisa")]
-        public decimal? EmployeeCostForVisa { get; set; }
+        [JsonProperty("employeeCostForVisa")]
+        public decimal? employeeCostForVisa { get; set; }
 
-        [JsonProperty("ProvidedTransportation")]
-        public string ProvidedTransportation { get; set; }
+        [JsonProperty("providedTransportation")]
+        public string providedTransportation { get; set; }
 
-        [JsonProperty("VisaFees")]
-        public decimal VisaFees { get; set; }
+        [JsonProperty("visaFees")]
+        public decimal visaFees { get; set; }
     }
 
     public class BuisnessTripReturnResponse

@@ -1,4 +1,4 @@
-﻿namespace IHCApis.Models
+﻿namespace iHC.Models.ProfilePage
 {
     public class Dependents
     {

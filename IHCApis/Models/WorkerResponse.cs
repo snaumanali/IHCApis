@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace IHCApis.Models
+namespace iHC.Models.Forms
 {
     public class WorkerResponse
     {
@@ -14,10 +14,10 @@ namespace IHCApis.Models
         public long PersonId { get; set; }
 
         [JsonPropertyName("names")]
-        public List<Names> Names { get; set; }
+        public List<Name> Names { get; set; }
     }
 
-    public class Names
+    public class Name
     {
         [JsonPropertyName("FirstName")]
         public string FirstName { get; set; }

@@ -1,18 +1,12 @@
 ﻿namespace iHC.Models.Forms
 {
-    public class ConsultationFormModel
+    public class ConsultationFormDto
     {
-        // Subject
+        public int Id { get; set; }
         public string Subject { get; set; }
-
-        // Message from business
         public string Message { get; set; }
-
-        // Comments
         public string Comments { get; set; }
-
-        // Attachments
-        // Use IFormFileCollection to bind multiple uploaded files
         public string FilesPath { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 }
